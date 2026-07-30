@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo Travel | Tu brújula hacia lo extraordinario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2C5F2D;
+            --secondary: #97BC62;
+            --dark: #1A1A1A;
+            --light: #F9F9F9;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        header {
+            background-color: var(--white);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .main-logo-image {
+            height: 65px;
+            width: auto;
+        }
+
+        .hero {
+            height: 60vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .description-section {
+            padding: 80px 10%;
+            background-color: var(--white);
+            text-align: center;
+        }
+
+        .description-box {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: var(--light);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            transition: transform 0.4s ease;
+        }
+        
+        .description-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .description-box h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .description-box p {
+            line-height: 1.8;
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .destinations-section {
+            padding: 80px 10%;
+            background-color: var(--light);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 50px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            position: relative;
+            height: 400px;
+            border-radius: 25px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            background-color: #e0e0e0;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
+            transition: background 0.4s ease;
+        }
+
+        .card:hover img {
+            transform: scale(1.1);
+        }
+
+        .card:hover .card-overlay {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%);
+        }
+
+        .card-content {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            z-index: 2;
+            color: var(--white);
+        }
+
+        .card-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            transform: translateY(20px);
+            transition: transform 0.4s ease;
+        }
+
+        .card-content button {
+            background-color: var(--secondary);
+            color: var(--white);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .card:hover .card-content h3 {
+            transform: translateY(0);
+        }
+
+        .card:hover .card-content button {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.1s;
+        }
+
+        .about-section {
+            padding: 80px 10%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            background-color: var(--white);
+        }
+
+        .about-box {
+            padding: 40px;
+            background-color: var(--light);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            transition: transform 0.4s ease;
+        }
+
+        .about-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .about-box h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .about-box p {
+            line-height: 1.7;
+            color: #555;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 1.6rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        .destino-info {
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            color: #444;
+        }
+
+        .destino-info p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .destino-info h4 {
+            color: var(--primary);
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .destino-info ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .destino-info ul li {
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--secondary);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #1f4220;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background-color: var(--dark);
+            color: var(--white);
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background-color: var(--secondary);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .about-section {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .main-logo-image {
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <!-- Logo actualizado con tu nombre de archivo -->
+            <img src="image_37837f.png" alt="GEOTRAVEL Logo" class="main-logo-image">
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1 class="fade-in">Descubre el mundo, un paisaje a la vez</h1>
+        <p class="fade-in" style="transition-delay: 0.2s;">Tu brújula hacia lo extraordinario.</p>
+    </section>
+
+    <section class="description-section">
+        <div class="description-box fade-in">
+            <h2>¿Quiénes Somos?</h2>
+            <p>En <strong>Geo Travel</strong>, nos apasiona conectar a los viajeros con la esencia pura de cada lugar. Somos más que una agencia; somos tus aliados en la creación de recuerdos imborrables. Ya sea que busques la tranquilidad del mar, el misterio de los paisajes desérticos, la riqueza arqueológica o la majestuosidad de nuestras montañas nevadas, diseñamos experiencias a medida que superan tus expectativas. Nuestro compromiso es brindarte un servicio personalizado y profesional, cuidando cada detalle para que tu única preocupación sea disfrutar del viaje.</p>
+        </div>
+    </section>
+
+    <section class="destinations-section">
+        <h2 class="section-title fade-in">Destinos Principales</h2>
+        <div class="grid">
+            <div class="card fade-in" onclick="openModal('Desierto de la Tatacoa')">
+                <img src="tatacoa.jpg" alt="Desierto de la Tatacoa">
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                    <h3>Desierto de la Tatacoa</h3>
+                    <button>Ver y Reservar</button>
+                </div>
+            </div>
+
+            <div class="card fade-in" onclick="openModal('Nevado del Ruiz')">
+                <img src="ruiz.jpg" alt="Nevado del Ruiz">
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                    <h3>Nevado del Ruiz</h3>
+                    <button>Ver y Reservar</button>
+                </div>
+            </div>
+
+            <div class="card fade-in" onclick="openModal('Villa de Leyva')">
+                <img src="leyva.jpg" alt="Villa de Leyva">
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                    <h3>Villa de Leyva</h3>
+                    <button>Ver y Reservar</button>
+                </div>
+            </div>
+
+            <div class="card fade-in" onclick="openModal('San Agustín')">
+                <img src="agustin.jpg" alt="San Agustín">
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                    <h3>San Agustín</h3>
+                    <button>Ver y Reservar</button>
+                </div>
+            </div>
+
+            <div class="card fade-in" onclick="openModal('Coveñas')">
+                <img src="covenas.jpg" alt="Coveñas">
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                    <h3>Coveñas</h3>
+                    <button>Ver y Reservar</button>
+                </div>
+            </div>
+
+            <div class="card fade-in" onclick="openModal('Aruba')">
+                <img src="aruba.jpg" alt="Aruba">
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                    <h3>Aruba</h3>
+                    <button>Ver y Reservar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="about-box fade-in">
+            <h2>Nuestra Misión</h2>
+            <p>Inspirar a los viajeros a explorar destinos únicos con un enfoque auténtico, ofreciendo experiencias que transforman la perspectiva y conectan profundamente con la naturaleza, la historia y la cultura local.</p>
+        </div>
+        <div class="about-box fade-in" style="transition-delay: 0.2s;">
+            <h2>Nuestra Visión</h2>
+            <p>Ser la agencia de viajes líder en el diseño de aventuras memorables, reconocida por nuestra excelencia, diseño innovador y compromiso inquebrantable con el turismo responsable a nivel global.</p>
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle">Viaje a...</h3>
+            
+            <div id="infoDestino" class="destino-info"></div>
+
+            <form id="bookingForm" onsubmit="enviarWhatsApp(event)">
+                <input type="hidden" id="destinoSeleccionado">
+                
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" required placeholder="Ej. Ana García">
+                </div>
+                
+                <div class="form-group">
+                    <label for="identificacion">Número de Identificación</label>
+                    <input type="number" id="identificacion" required placeholder="Ej. 1000222333">
+                </div>
+                
+                <div class="form-group">
+                    <label for="celular">Número de Celular</label>
+                    <input type="tel" id="celular" required placeholder="Ej. 3001234567">
+                </div>
+
+                <button type="submit" class="submit-btn">Solicitar Cotización</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Geo Travel. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(element => {
+            observer.observe(element);
+        });
+
+        const datosDestinos = {
+            'Desierto de la Tatacoa': {
+                descripcion: 'La segunda zona árida más extensa de Colombia, un fascinante bosque seco tropical conocido por sus impresionantes paisajes erosionados y cielos despejados.',
+                atractivos: [
+                    'Exploración del Desierto Rojo (Cusco) y sus laberintos de tierra.',
+                    'Caminatas por el Desierto Gris (Los Hoyos) y sus formaciones fantasmales.',
+                    'Observación de estrellas en el Observatorio Astronómico.',
+                    'Baño en las piscinas de agua natural en medio del paisaje árido.'
+                ]
+            },
+            'Nevado del Ruiz': {
+                descripcion: 'Un imponente volcán ubicado en la cordillera Central de los Andes colombianos. Ofrece paisajes de páramo únicos, aguas termales y un contacto directo con ecosistemas de alta montaña.',
+                atractivos: [
+                    'Avistamiento del majestuoso paisaje glaciar y ecosistema de páramo.',
+                    'Relajación en las termales naturales de la región (Otoño, Tierra Viva).',
+                    'Fotografía de la flora nativa, como los emblemáticos frailejones.',
+                    'Rutas de senderismo permitidas en el Parque Nacional Natural Los Nevados.'
+                ]
+            },
+            'Villa de Leyva': {
+                descripcion: 'Uno de los pueblos más hermosos de Colombia, famoso por su arquitectura colonial impecablemente conservada, su enorme plaza empedrada y su riqueza paleontológica.',
+                atractivos: [
+                    'Recorrido por la Plaza Mayor, una de las más grandes de América.',
+                    'Visita al Museo Paleontológico y el fósil de Kronosaurus.',
+                    'Caminata hacia los deslumbrantes Pozos Azules.',
+                    'Exploración de los viñedos locales y la Casa Terracota.'
+                ]
+            },
+            'San Agustín': {
+                descripcion: 'Patrimonio de la Humanidad por la UNESCO. Este municipio en el Huila alberga el mayor conjunto de monumentos religiosos y estatuas de piedra precolombinas de Sudamérica.',
+                atractivos: [
+                    'Visita al Parque Arqueológico de San Agustín y sus misteriosas deidades de piedra.',
+                    'Recorrido por el Estrecho del río Magdalena (el punto más angosto del río).',
+                    'Cabalgata hacia La Chaquira y El Tablón.',
+                    'Ruta de fincas cafeteras y cascadas impresionantes como el Salto de Bordones.'
+                ]
+            },
+            'Coveñas': {
+                descripcion: 'Un paraíso tropical en el Golfo de Morrosquillo. Sus kilómetros de playas de arena blanca y aguas tranquilas y poco profundas lo hacen ideal para el descanso.',
+                atractivos: [
+                    'Disfrute de playas tranquilas como La Coquerita y la Primera Ensenada.',
+                    'Paseo en canoa por los manglares de la Ciénaga de la Caimanera.',
+                    'Degustación de la exquisita gastronomía caribeña.',
+                    'Deportes acuáticos y paseos en lancha hacia el archipiélago de San Bernardo.'
+                ]
+            },
+            'Aruba': {
+                descripcion: 'La "Isla Feliz" del Caribe. Con un clima perfecto durante todo el año, Aruba cautiva con su mezcla de cultura europea y caribeña, aguas turquesas y contrastes geográficos.',
+                atractivos: [
+                    'Días de sol en Eagle Beach, catalogada frecuentemente como una de las mejores playas del mundo.',
+                    'Exploración del árido Parque Nacional Arikok y sus cuevas naturales.',
+                    'Snorkel en las aguas cristalinas y exploración de naufragios.',
+                    'Caminatas por la colorida capital de Oranjestad con su arquitectura holandesa.'
+                ]
+            }
+        };
+
+        const modal = document.getElementById('bookingModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const destinoInput = document.getElementById('destinoSeleccionado');
+        const infoContenedor = document.getElementById('infoDestino');
+
+        function openModal(destino) {
+            modalTitle.innerText = `Viaje a ${destino}`;
+            destinoInput.value = destino;
+
+            const datos = datosDestinos[destino];
+            if (datos) {
+                let listaAtractivos = datos.atractivos.map(attr => `<li>${attr}</li>`).join('');
+                infoContenedor.innerHTML = `
+                    <p><strong>Acerca del destino:</strong> ${datos.descripcion}</p>
+                    <h4>Principales Atractivos:</h4>
+                    <ul>${listaAtractivos}</ul>
+                `;
+            } else {
+                infoContenedor.innerHTML = `<p>Descubre las maravillas que ${destino} tiene para ofrecerte.</p>`;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.getElementById('bookingForm').reset();
+        }
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        function enviarWhatsApp(e) {
+            e.preventDefault();
+            
+            const destino = document.getElementById('destinoSeleccionado').value;
+            const nombre = document.getElementById('nombre').value;
+            const identificacion = document.getElementById('identificacion').value;
+            const celular = document.getElementById('celular').value;
+            
+            const numeroDestino = "573023733763"; 
+            
+            const mensaje = `¡Hola Geo Travel! 🌍%0A%0AEstoy interesado/a en el destino: *${destino}*.%0A%0AMis datos son:%0A- Nombre: ${nombre}%0A- ID: ${identificacion}%0A- Celular: ${celular}%0A%0AQuiero recibir más información.`;
+            
+            const urlWhatsApp = `https://wa.me/${numeroDestino}?text=${mensaje}`;
+            window.open(urlWhatsApp, '_blank');
+            closeModal();
+        }
+    </script>
+</body>
+</html>
